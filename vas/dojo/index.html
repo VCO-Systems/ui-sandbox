@@ -2,37 +2,104 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Demo: Layout with Dijit</title>
-        <link rel="stylesheet" href="../../../resources/style/demo.css" media="screen">
-        <link rel="stylesheet" href="style.css" media="screen">
+        <title>VAS Information</title>
         <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.9.3/dijit/themes/claro/claro.css" media="screen">
+        <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.9.3/dojox/grid/resources/Grid.css" media="screen">
+        <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/dojo/1.9.3/dojox/grid/resources/claroGrid.css" media="screen">
+        
+        
+        <style type="text/css">
+            html, body {
+			    height: 100%;
+			    margin: 0;
+			    overflow: hidden;
+			    padding: 0;
+			}
+			
+			#appLayout {
+			    height: 100%;
+			}
+			#leftCol {
+			    width: 14em;
+			}
+			
+			.claro .demoLayout .edgePanel {
+			    background-color: #d0e9fc;
+			}
+			
+			#viewsChart {
+			    width: 550px;
+			    height: 550px;
+			}
+			
+			#gridDiv {
+			    height: 20em;
+			}
+            </style>
     </head>
     <body class="claro">
         <div id="appLayout" class="demoLayout" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design: 'headline'">
-            <div class="centerPanel" data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region: 'center', tabPosition: 'bottom'">
-                <div data-dojo-type="dijit/layout/ContentPane" title="Group 1">
-                    <h4>Group 1 Content</h4>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-                    ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                    nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
-                    anim id est laborum.</p>
+            <div class="centerPanel" data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region: 'center', tabPosition: 'top'">
+                <div data-dojo-type="dijit/layout/ContentPane" title="Search Items">
+                    <h4>Search Items</h4>
+                    <label for="firstname">SKU Size Desc / Barcode:</label>
+					<input type="text" name="criteria_sku" value=""
+					    data-dojo-type="dijit/form/TextBox"
+					    data-dojo-props="trim:true, propercase:true" id="criteria_sku" />
+                    
+                    <div id="gridDiv"></div>
                 </div>
-                <div data-dojo-type="dijit/layout/ContentPane" title="Group Two">
+                <div data-dojo-type="dijit/layout/ContentPane" title="Edit">
                     <h4>Group 2 Content</h4>
                 </div>
-                <div data-dojo-type="dijit/layout/ContentPane" title="Long Tab Label for this One">
-                    <h4>Group 3 Content</h4>
-                </div>
+                
             </div>
             <div class="edgePanel" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'top'">Header content (top)</div>
             <div id="leftCol" class="edgePanel" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'left', splitter: true">Sidebar content (left)</div>
         </div>
         <!-- load dojo -->
-        <script src="//ajax.googleapis.com/ajax/libs/dojo/1.9.3/dojo/dojo.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/dojo/1.9.3/dojo/dojo.js" data-dojo-config="async:true"></script>
         <script>
-            require(["dojo/parser", "dijit/layout/BorderContainer", "dijit/layout/TabContainer", "dijit/layout/ContentPane", "dojo/domReady!"], function(parser){
+            require(["dojo/parser","dojo/_base/lang", "dojo/data/ItemFileWriteStore",  "dojox/grid/DataGrid",
+                     "dijit/layout/BorderContainer", "dijit/layout/TabContainer", "dijit/layout/ContentPane",  "dijit/form/TextBox" , "dojo/dom","dojo/domReady!" ], function(parser,lang,ItemFileWriteStore,DataGrid){
                 parser.parse();
+                
+                /*set up data store*/
+                var data = {
+                  identifier: "id",
+                  items: []
+                };
+                var data_list = [
+                  { col1: "normal", col2: false, col3: 'But are not followed by two hexadecimal', col4: 29.91},
+                  { col1: "important", col2: false, col3: 'Because a % sign always indicates', col4: 9.33},
+                  { col1: "important", col2: false, col3: 'Signs can be selectively', col4: 19.34}
+                ];
+                var rows = 60;
+                for(var i = 0, l = data_list.length; i < rows; i++){
+                  data.items.push(lang.mixin({ id: i+1 }, data_list[i%l]));
+                }
+                var store = new ItemFileWriteStore({data: data});
+
+                /*set up layout*/
+                var layout = [[
+                  {'name': 'Column 1', 'field': 'id', 'width': '100px'},
+                  {'name': 'Column 2', 'field': 'col2', 'width': '100px'},
+                  {'name': 'Column 3', 'field': 'col3', 'width': '200px'},
+                  {'name': 'Column 4', 'field': 'col4', 'width': '150px'}
+                ]];
+
+                /*create a new grid*/
+                var grid = new DataGrid({
+                    id: 'grid',
+                    store: store,
+                    structure: layout,
+                    rowSelector: '20px'});
+
+                /*append the new grid to the div*/
+                grid.placeAt("gridDiv");
+
+                /*Call startup() to render the grid*/
+                grid.startup();
             });
         </script>
     </body>
