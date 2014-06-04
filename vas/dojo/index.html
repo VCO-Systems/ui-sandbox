@@ -33,36 +33,78 @@
 			}
 			
 			#gridDiv {
-			    height: 20em;
+			       height: 20em;
 			}
             </style>
     </head>
     <body class="claro">
         <div id="appLayout" class="demoLayout" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design: 'headline'">
-            <div class="centerPanel" data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region: 'center', tabPosition: 'top'">
-                <div data-dojo-type="dijit/layout/ContentPane" title="Search Items">
+            <div id="appTabs" class="centerPanel" data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region: 'center', tabPosition: 'top'">
+                <div id="tabSearch" data-dojo-type="dijit/layout/ContentPane" title="Search Items">
                     <h4>Search Items</h4>
                     <label for="firstname">SKU Size Desc / Barcode:</label>
 					<input type="text" name="criteria_sku" value=""
 					    data-dojo-type="dijit/form/TextBox"
 					    data-dojo-props="trim:true, propercase:true" id="criteria_sku" />
+                    <button id="progButtonNode" type="button"></button>
+                    <div id="gridDiv" style="margin-top: 10px; margin-bottom: 15px;"></div>
                     
-                    <div id="gridDiv"></div>
+                    <button id="btnEdit" type="button"></button>
+                    <button id="btnAdd" type="button"></button>
+                    <button id="btnDelete" type="button"></button>
                 </div>
-                <div data-dojo-type="dijit/layout/ContentPane" title="Edit">
-                    <h4>Group 2 Content</h4>
+                <div id="tabEdit" data-dojo-type="dijit/layout/ContentPane" title="Edit">
+                    <h4>(Edit screen goes here)</h4>
                 </div>
                 
             </div>
-            <div class="edgePanel" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'top'">Header content (top)</div>
+            <div class="edgePanel" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'top'">VAS Information</div>
             <div id="leftCol" class="edgePanel" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region: 'left', splitter: true">Sidebar content (left)</div>
         </div>
         <!-- load dojo -->
         <script src="//ajax.googleapis.com/ajax/libs/dojo/1.9.3/dojo/dojo.js" data-dojo-config="async:true"></script>
         <script>
-            require(["dojo/parser","dojo/_base/lang", "dojo/data/ItemFileWriteStore",  "dojox/grid/DataGrid",
-                     "dijit/layout/BorderContainer", "dijit/layout/TabContainer", "dijit/layout/ContentPane",  "dijit/form/TextBox" , "dojo/dom","dojo/domReady!" ], function(parser,lang,ItemFileWriteStore,DataGrid){
+            require(["dojo/parser","dojo/_base/lang", "dojo/data/ItemFileWriteStore",  "dojox/grid/DataGrid", "dijit/form/Button", "dijit/registry",
+                     "dijit/layout/BorderContainer", "dijit/layout/TabContainer", "dijit/layout/ContentPane",  "dijit/form/TextBox" , "dojo/dom","dojo/domReady!" ], 
+                     function(parser,lang,ItemFileWriteStore,DataGrid,Button,registry){
                 parser.parse();
+                
+                var tabs = registry.byId("appTabs");
+                var tab1 = registry.byId("tabSearch");
+                var tab2 = registry.byId("tabEdit");
+                
+                var myButton = new Button({
+                    label: "Search",
+                    onClick: function(){
+                        // Do something:
+                        //dom.byId("result1").innerHTML += "Thank you! ";
+                    }
+                }, "progButtonNode");
+                
+                var editButton = new Button({
+                    label: "Edit",
+                    onClick: function(){
+                        // Do something:
+                        //dom.byId("result1").innerHTML += "Thank you! ";
+                        tabs.selectChild(tab2);
+                    }
+                }, "btnEdit");
+                
+                var addButton = new Button({
+                    label: "Add",
+                    onClick: function(){
+                        // Do something:
+                        //dom.byId("result1").innerHTML += "Thank you! ";
+                    }
+                }, "btnAdd");
+                
+                var deleteButton = new Button({
+                    label: "Delete",
+                    onClick: function(){
+                        // Do something:
+                        //dom.byId("result1").innerHTML += "Thank you! ";
+                    }
+                }, "btnDelete");
                 
                 /*set up data store*/
                 var data = {
@@ -70,9 +112,12 @@
                   items: []
                 };
                 var data_list = [
-                  { col1: "normal", col2: false, col3: 'But are not followed by two hexadecimal', col4: 29.91},
-                  { col1: "important", col2: false, col3: 'Because a % sign always indicates', col4: 9.33},
-                  { col1: "important", col2: false, col3: 'Signs can be selectively', col4: 19.34}
+                  { col1: "8712SA-SMALL-AAA", col2: "1049284", col3: "T-SHIRT RED"},
+                  { col1: "18AAF3-LARGE-AB1", col2: "1049285", col3: "T-SHIRT RED"},
+                  { col1: "A47AF-SMALL-2F", col2: "1049286", col3: "T-SHIRT BLUE"},
+                  { col1: "2914J-MEDIUM-7UU", col2: "1049287", col3: "T-SHIRT BLUE"},
+                  { col1: "17FJ29-SMALL-21A", col2: "1049288", col3: "T-SHIRT GREEN"},
+                  { col1: "1838F7-SMALL-21F", col2: "1049289", col3: "T-SHIRT GREEN"},
                 ];
                 var rows = 60;
                 for(var i = 0, l = data_list.length; i < rows; i++){
@@ -82,10 +127,13 @@
 
                 /*set up layout*/
                 var layout = [[
-                  {'name': 'Column 1', 'field': 'id', 'width': '100px'},
-                  {'name': 'Column 2', 'field': 'col2', 'width': '100px'},
-                  {'name': 'Column 3', 'field': 'col3', 'width': '200px'},
-                  {'name': 'Column 4', 'field': 'col4', 'width': '150px'}
+                  {'name': 'SKU Barcode', 'field': 'col1', 'width': '250px'},
+                  {'name': 'Spec Instr 1', 'field': 'col2', 'width': '100px'},
+                  {'name': 'Spec Instr 2', 'field': 'col3', 'width': '150px'},
+                  {'name': 'Spec Instr 3', 'field': 'col4', 'width': '150px'},
+                  {'name': 'Spec Instr 4', 'field': 'col5', 'width': '150px'},
+                  {'name': 'Spec Instr 5', 'field': 'col6', 'width': '150px'},
+                  {'name': 'Spec Instr 6', 'field': 'col7', 'width': '150px'}
                 ]];
 
                 /*create a new grid*/
@@ -100,6 +148,7 @@
 
                 /*Call startup() to render the grid*/
                 grid.startup();
+                
             });
         </script>
     </body>

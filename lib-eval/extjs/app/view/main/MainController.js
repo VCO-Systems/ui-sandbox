@@ -13,9 +13,21 @@ Ext.define('extjs.view.main.MainController', {
     ],
 
     alias: 'controller.main',
+    refs: [{
+        mainTabs: '#mainTabs'
+    }],
 
-    onClickButton: function () {
-        Ext.Msg.confirm('Confirm', 'Are you sure?', 'onConfirm', this);
+    showList: function () {
+    	var barcode=this.lookupReference('fldBarcode').getValue();
+    	var desc   =this.lookupReference('fldStyle').getValue();
+    	if (barcode.length>0 || desc.length>0 ) {
+    		this.lookupReference('mainTabs').setActiveTab(1);  // Switch to the 'List' tab to display data
+    	}
+    	else {
+    		Ext.Msg.alert('Information', 'Please enter search criteria');
+    	}
+    	console.log(barcode,desc);
+    	// Ext.Msg.confirm('Confirm', 'Are you sure?', 'onConfirm', this);
     },
 
     onConfirm: function (choice) {

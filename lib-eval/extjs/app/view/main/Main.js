@@ -22,12 +22,12 @@ Ext.define('extjs.view.main.Main', {
     items: [{
         xtype: 'panel',
         region: 'north',
-        html: '<b>Item</b>',
+        html: '<h4>Item</h4>',
         width: 250,
         split: true,
         tbar: [{
             text: 'List',
-            handler: 'onClickButton'
+            handler: 'showList',
         },
         {
             text: 'Links',                      
@@ -61,6 +61,7 @@ Ext.define('extjs.view.main.Main', {
     },{
         region: 'center',
         xtype: 'tabpanel',
+        reference: 'mainTabs',
         items:[{
             title: 'Criteria',
             html: '',
@@ -84,47 +85,54 @@ Ext.define('extjs.view.main.Main', {
 						items: [{
 				            fieldLabel: 'Style Desc:',
 				            name: 'txtStyleDesc',
-				            allowBlank:true
+				            allowBlank:true,
+				            reference: 'fldStyle'
 				        }, {
 				            fieldLabel: 'Barcode:',
 				            name: 'txtBarcode',
-				            allowBlank:true
+				            allowBlank:true,
+				            reference: 'fldBarcode'
 				        }],
                     }
                   ]
         
         },
         {
-            title: 'The Data',
+            title: 'List',
             //layout: 'fit',
             items: [{
                 xtype: 'grid',
-                title: 'Simpsons',
+                title: 'SKU',
                 selType: 'checkboxmodel',
                 selModel: {
                 	checkOnly: true,
                 	injectCheckbox: 0
                 },
                 store: {
-                    fields:['name', 'email', 'phone'],
+                    fields:['descr', 'barcode', 'si1','si2','si3','si4','si5','si6'],
                     data:[
-                        { name: 'Lisa',  email: "lisa@simpsons.com",
-                          phone: "555-111-1224"  },
-                        { name: 'Bart',  email: "bart@simpsons.com",
-                          phone: "555-222-1234" },
-                        { name: 'Homer', email: "home@simpsons.com",
-                          phone: "555-222-1244"  },
-                        { name: 'Marge', email: "marge@simpsons.com",
-                          phone: "555-222-1254"  }
+                        { descr: 'Lisa',  barcode: "AJFOFJ2K13",
+                          si1: "555-111-1224"  },
+                        { descr: 'Bart',  barcode: "O3I1IJJJFO",
+                          si1: "555-222-1234" },
+                        { descr: 'Homer', barcode: "FJWOFJ2JR2",
+                          si1: "555-222-1244"  },
+                        { descr: 'Marge', barcode: "948JAJOF2J",
+                          si1: "555-222-1254"  }
                     ],
                     proxy: {
                         type: 'memory'
                     }
                 },
                 columns: [
-                    { text: 'Name',  dataIndex: 'name' },
-                    { text: 'Email', dataIndex: 'email', flex: 1},
-                    { text: 'Phone', dataIndex: 'phone' }
+                    { text: 'Style Descr',  dataIndex: 'descr' },
+                    { text: 'Barcode', dataIndex: 'barcode', flex: 1},
+                    { text: 'Special Instr 1', dataIndex: 'si1' },
+                    { text: 'Special Instr 2', dataIndex: 'si2' },
+                    { text: 'Special Instr 3', dataIndex: 'si3' },
+                    { text: 'Special Instr 4', dataIndex: 'si4' },
+                    { text: 'Special Instr 5', dataIndex: 'si5' },
+                    { text: 'Special Instr 6', dataIndex: 'si6' },
                 ],
              // paging bar on the bottom
                 bbar: Ext.create('Ext.PagingToolbar', {
@@ -150,46 +158,3 @@ Ext.define('extjs.view.main.Main', {
     }]
 });
 
-Ext.define('User', {
-    extend: 'Ext.data.Model',
-    
-});
-
-var userStore = Ext.create('Ext.data.Store', {
-    model: 'User',
-    autoLoad: true,
-    pageSize: 4,
-    url: 'data/users/json',
-    reader: {
-    	type: 'json',
-    	root: 'users',
-    	totalProperty: 'total'
-    }
-});
-
-Ext.create('Ext.grid.Panel', {
-    store: userStore,
-    width: 400,
-    height: 200,
-    title: 'Application Users',
-    columns: [
-        {
-            text: 'Name',
-            width: 100,
-            sortable: false,
-            hideable: false,
-            dataIndex: 'name'
-        },
-        {
-            text: 'Email Address',
-            width: 150,
-            dataIndex: 'email',
-            hidden: true
-        },
-        {
-            text: 'Phone Number',
-            flex: 1,
-            dataIndex: 'phone'
-        }
-    ]
-});
